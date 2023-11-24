@@ -40,6 +40,40 @@ app.post('/api/users', async (req, res) => {
   } catch (error) {
     res.json({ error });
   }
+});
+
+app.post('/api/users/:_id/exercises', async (req, res) => {
+  const id = req.params._id;
+  const { description, duration, date } = req.body;
+
+  try {
+    const user = await User.findById(id);
+    
+    if (!user) {
+      res.send('Could not find user');
+    } else {
+      const exerciseObj = new Exercise({
+        user_id: user._id,
+        description,
+        duration, 
+        date: date ? new Date(date) : new Date()
+      });
+
+      const exercise = await exerciseObj.save();
+
+      res.json({
+        _id: user._id,
+        username: user.username,
+        description: exercise.description,
+        duration: exercise.duration,
+        date: new Date(exercise.date).toDateString()
+      });
+    }
+
+  } catch (error) {
+    console.log(error);
+    res.send('Error saving the exercise');
+  }
 
 
 });
