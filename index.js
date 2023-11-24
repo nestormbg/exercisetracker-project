@@ -23,7 +23,7 @@ const ExerciseSchema = new Schema({
 const Exercise = mongoose.model('Exercise', ExerciseSchema);
 
 app.use(cors())
-app.use(express.static('public'))
+app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true }));
 app.get('/', (req, res) => {
   res.sendFile(__dirname + '/views/index.html')
@@ -31,6 +31,12 @@ app.get('/', (req, res) => {
 
 app.get('/api/users', async (req, res) => {
   const users = await User.find({}).select('_id username');
+
+  if (!users) {
+    res.send('No users');
+  } else {
+    res.json(users);
+  }
 });
 
 app.post('/api/users', async (req, res) => {
